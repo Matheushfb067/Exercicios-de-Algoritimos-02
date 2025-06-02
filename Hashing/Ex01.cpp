@@ -1,3 +1,4 @@
+//hash_aux
 /*
 Faça uma  função que implemente o método da divisão, dado por:
 

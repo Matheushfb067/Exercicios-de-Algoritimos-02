@@ -1,69 +1,113 @@
-//Sondagem Quadratica
+//Inserção de Elementos
 /*
-Usando a função hash_aux(), faça uma função que implemente a sondagem quadrática, dada por:
+O algoritmo de inserção de chaves é mostrado abaixo:
 
-h(k,i,m)=(h′(k,m)+ (c1 * i) + (c2* i ^ 2)) mod m
+HASH-INSERT(T,m,k)
+    i <- 0
+    do
+        j <- h(k,i,m)
+        if T[j].status != 1
+            T[j].k <- k
+            T[j].status=1
+            return j
+        else
+            i <- i+1
+    while i!=m
+    return -1
+Faça uma função que implemente este algoritmo. Esta função deve retornar a posição onde a chave foi 
+inserida na tabela hash, ou -1 se não for possível inseri-la (tabela cheia). Use a sondagem linear para 
+escolher a posição de inserção da chave. Sua função deve ter o seguinte cabeçalho:
 
-Esta função deve ter o seguinte cabeçalho: 
+int hash_insert(dado t[], int m, int k)
+Faça então um programa que leia o tamanho desejado m
+ para a tabela hash e as chaves a serem inseridas.
 
-int hash2(int k, int i, int m, int c1, int c2)
+Depois, o programa deve criar uma tabela de tamanho m
+ inicialmente vazia (todas as posições preenchidas com -1), e ir inserindo as chaves digitadas.
 
-onde k é a chave a ser inserida, m é o tamanho da tabela hash, e i é o número da tentativa.
-Depois faça um programa que leia os valores de k, m, c1 e c2 e faça uso desta função para retornar as posições da 
-sondagem quadrática.
+Ao final, seu programa deve mostrar a tabela depois das inserções. 
 
 Entrada:
-A entrada consiste  uma única llinha com 4 inteiros, correspondentes aos valores de k, m, c1 e c2, respectivamente. 
+A entrada consiste de duas linhas:
+- a primeira linha irá conter o tamanho m
+ da tabela (um número inteiro)
+- a segunda linha consiste de vários inteiros positivos, correspondentes aos valores das chaves a serem 
+inseridas. Esta linha termina com o número 0, que não deve ser inserido na tabela.
 
 Saída:
-Na saída, o programa deve mostrar todas as posições da sondagem quadrática para as entradas dadas.
-
-Exemplos de entrada:    	Exemplos  de saída:
-4 9 1 3                     4 8 0 7 2 3 1 5 6
--4 11 1 3                   7 0 10 4 4 10 0 7 9 6 9
-25 9 1 3                    7 2 3 1 5 6 4 8 0
+Na saída, o programa deve mostrar a tabela preenchida, como no exemplo abaixo.
 */
 
 #include <iostream>
-#include <cmath>
 using namespace std; 
 
-struct dados
-{
-    int k; // chave
-    int status; // 0:vazio, 1:ocupado, 2:removido
+struct dado{
+    int k; 
+    int status;//0: vazio / 1:ocupado
 };
 
-int hash_aux(int k, int m)
-{
+int hash_aux(int k, int m){
     int h;
-    h =  k % m; 
-    if (h < 0)
-        h = h + m; // se negativo, ajusta para o intervalo [0, m-1]
+    
+    h = k % m;
+    
+    if(h < 0)
+        h = h + m;
+        
     return h;
 }
 
-//------------------------------------//---------------------------------//
-
-int hash2(int k, int i, int m, int c1, int c2){
+int hash1(int k, int i, int m){
     int h;
     
-    h = (hash_aux(k, m) + (c1*i) + (c2 * int(pow(i, 2)))) % m;
+    h = (hash_aux(k,m) + i) % m; 
     
     return h;
 }
-
-//------------------------------------//---------------------------------//
+/*--------------------------------//---------------------------------*/
+int hash_insert(dado T[], int m, int k){
+    int i = 0; 
+    int j;    
+    
+    do{
+        j = hash1(k, i, m);
+        if(T[j].status != 1){
+            T[j].k = k;
+            T[j].status = 1;
+            return j;
+        }
+        else
+            i = i + 1;
+    }while(i != m);
+    
+    return -1;
+}
 
 int main(){
+    //Declare variables:
+    dado T[100];
+    int m, k;
+    int j;
     
-    int k, m, c1, c2, i;
+    cin>>m;
     
-    cin>>k>>m>>c1>>c2;
-    
-    for(i = 0; i < m; i++){
-        cout<<hash2(k, i, m, c1, c2)<<" ";
+    //Inicialização de todas as posições do vetor de struct T[] com 0.
+    for(int i = 0; i < m; i++){
+        T[i].status = 0; 
+        T[i].k = -1;
     }
     
-    return 0;
+    //Entrada de Dados: 
+    cin>>k;
+    while(k != 0){
+        hash_insert(T, m, k);
+        cin>>k;
+    }
+
+    
+    for(j = 0; j < m; j++){
+        cout<<T[j].k<<" "; 
+    }
+    
+    return 0; 
 }

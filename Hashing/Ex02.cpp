@@ -1,3 +1,4 @@
+//Sondagem linear
 /*
 Usando a função hash_aux(), faça uma função que implemente a sondagem linear, dada por:
 
