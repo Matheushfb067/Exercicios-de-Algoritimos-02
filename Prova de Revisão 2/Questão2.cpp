@@ -1,4 +1,4 @@
-//
+//PROVA - HASH - PESQUISA SONDAGEM QUADRÁTICA
 /*
 Tal como a sondagem linear, a sondagem quadrática é uma técnica para encontrar uma
 
@@ -61,3 +61,93 @@ Exemplo de entrada:                  	Exemplo  de saída:
 19
 */
 
+#include <iostream>
+using namespace std; 
+
+struct dado {
+    int k; //chave
+    int status;
+};
+
+int hash_aux(int k, int m){
+    int h; 
+    
+    h = k % m; 
+    
+    if(h < 0)
+        h += m;
+        
+    return h;
+}
+
+int hash1(int k, int i, int m, int c1, int c2){
+    int h; 
+    
+    h = (hash_aux(k, m) + (c1*i) + (c2 * i * i)) % m;
+    
+    return h; 
+}
+
+int hash_insert(dado t[], int k, int m, int c1, int c2)
+{
+    int i;
+    int j;
+    
+    i = 0;
+    do 
+    {
+        j = hash1(k, i, m, c1, c2);
+        if (t[j].status != 1) 
+        {
+            t[j].k = k;
+            t[j].status = 1; // ocupado
+            return j; // posição onde a chave foi inserida
+        }
+        i++;
+    } while (i != m); // enquanto não encontrar a chave ou tabela cheia
+    return -1; // tabela cheia
+}
+
+int hash_search(dado T[], int m, int k, int c1, int c2){
+    int j, i = 0; 
+    
+    do{
+        j = hash1(k, i, m, c1, c2);
+        if(T[j].k == k)
+            return j;
+        i = i + 1;
+    }while(T[j].status != 0 && i < m);
+    return -1;
+}
+
+int main(){
+    
+    dado T[100];
+    int k, m, c1, c2; 
+    
+    cin >> m >> c1 >> c2;
+    
+    // Inicializando a tabela
+    for (int i = 0; i < m; i++)  
+    {
+        T[i].k = -1;
+        T[i].status = 0; // 0:vazio
+    }
+    
+    cin >> k; 
+    while(k != 0){
+        hash_insert(T, k, m, c1, c2);
+        cin >> k;
+    }
+    
+    int x; 
+    cin >> x; 
+    int pos = hash_search(T, m, x, c1, c2); //guarda a posição da chave x que se quer encontrar 
+    
+    if(pos != -1)
+        cout<<"Chave "<< x << " econtrada na posição " << pos << endl;
+    else
+        cout<<"Chave " << x <<" não encontrada "<<endl;
+
+    return 0; 
+}
